@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Shield,
+  ShieldAlert,
   Sparkles,
   Cpu,
   Globe2,
@@ -23,7 +24,10 @@ export type ActiveTab =
   | 'HARDWARE'
   | 'SOVEREIGN_11'
   | 'J09_RING'
-  | 'MANIFEST';
+  | 'MANIFEST'
+  | 'DYNAMICS_DEBUG'
+  | 'GOD_MODE'
+  | 'RASPBERRY_PI';
 
 interface TabNavigationProps {
   activeTab: ActiveTab;
@@ -45,7 +49,7 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
       id: 'DUAL_CAMERA' as ActiveTab,
       label: '01. DUAL CAM & LINK (∞)',
       icon: Camera,
-      badge: 'FRONT / REAR 4K',
+      badge: 'UNFUSED 4K',
       badgeColor: 'bg-[#ff4e00]/20 text-[#ff4e00] font-bold border-[#ff4e00]/40'
     },
     {
@@ -110,6 +114,27 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
       icon: FileCheck,
       badge: 'SEALED JSON',
       badgeColor: 'bg-[#2d3139] text-[#8e9299] border-[#404550]'
+    },
+    {
+      id: 'DYNAMICS_DEBUG' as ActiveTab,
+      label: '11. DYNAMICS DEBUG',
+      icon: Activity,
+      badge: 'ANTI-COLLIDE',
+      badgeColor: 'bg-[#00e5ff]/20 text-[#00e5ff] font-bold border-[#00e5ff]/40'
+    },
+    {
+      id: 'GOD_MODE' as ActiveTab,
+      label: '12. GOD MODE FILES',
+      icon: ShieldAlert,
+      badge: 'RING 0 VFS',
+      badgeColor: 'bg-[#ff4e00]/20 text-[#ff4e00] font-bold border-[#ff4e00]/40'
+    },
+    {
+      id: 'RASPBERRY_PI' as ActiveTab,
+      label: '13. RASPBERRY PI 5',
+      icon: Cpu,
+      badge: '40-PIN CSI',
+      badgeColor: 'bg-[#ec4899]/20 text-[#ec4899] font-bold border-[#ec4899]/40'
     }
   ];
 

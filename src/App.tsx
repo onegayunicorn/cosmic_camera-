@@ -14,6 +14,9 @@ import { MatrixEngineView } from './components/MatrixEngineView';
 import { DriverCpuView } from './components/DriverCpuView';
 import { DesktopWindowManager } from './components/DesktopWindowManager';
 import { PlatformViewportScaler } from './components/PlatformViewportScaler';
+import { WindowDynamicsDebugger } from './components/WindowDynamicsDebugger';
+import { GodModeFilesView } from './components/GodModeFilesView';
+import { RaspberryPiView } from './components/RaspberryPiView';
 
 import { releaseGovernor } from './services/releaseGovernor';
 import { validationEngineer } from './services/validationEngineer';
@@ -159,6 +162,42 @@ export default function App() {
                   incidents={releaseState.incidents}
                   onRollback={handleRollback}
                 />
+              )}
+
+              {activeTab === 'DYNAMICS_DEBUG' && (
+                <div className="space-y-4">
+                  <div className="bg-[#121418] border border-[#00e5ff]/40 rounded-lg p-3 text-xs font-mono flex items-center justify-between">
+                    <span className="text-[#00e5ff] font-bold">⚡ WINDOWS DYNAMICS ENGINE & COLLISION TELEMETRY</span>
+                    <span className="text-[#8e9299] text-[10px]">Active Kinematics Loop: 60 FPS</span>
+                  </div>
+                  <WindowDynamicsDebugger
+                    windows={[
+                      { id: 'DUAL_CAMERA', title: 'Dual Camera', iconName: 'Camera', isOpen: true, isMinimized: false, isMaximized: false, zIndex: 10, x: 50, y: 50, width: 600, height: 400, minWidth: 400, minHeight: 300, pinned: false, opacity: 1 },
+                      { id: 'MATRIX_ENGINE', title: 'Matrix Engine', iconName: 'Grid', isOpen: true, isMinimized: false, isMaximized: false, zIndex: 9, x: 280, y: 120, width: 550, height: 380, minWidth: 400, minHeight: 300, pinned: false, opacity: 1 },
+                      { id: 'GOD_MODE', title: 'God Mode Files', iconName: 'ShieldAlert', isOpen: true, isMinimized: false, isMaximized: false, zIndex: 8, x: 520, y: 180, width: 580, height: 400, minWidth: 400, minHeight: 300, pinned: false, opacity: 1 }
+                    ]}
+                    onUpdateWindow={() => {}}
+                    onTileWindows={() => {}}
+                    onCascadeWindows={() => {}}
+                    onResetPositions={() => {}}
+                  />
+                </div>
+              )}
+
+              {activeTab === 'GOD_MODE' && (
+                <GodModeFilesView
+                  gates={releaseState.gates}
+                  releaseState={releaseState}
+                  onForcePassAllGates={() => {
+                    releaseState.gates?.forEach((g: any) => validationEngineer.runGateValidation(g.id, 'MEASURED'));
+                    releaseGovernor.authorizeRelease();
+                  }}
+                  onResetGates={handleReset}
+                />
+              )}
+
+              {activeTab === 'RASPBERRY_PI' && (
+                <RaspberryPiView />
               )}
             </>
           )}

@@ -1,6 +1,6 @@
 {
   "name": "Cosmic Camera V3.0.0 — Dual-Agent Release & Photonic Orchestrator",
-  "description": "Dual-Agent Release Operations System with 12 Gates, Dual Front/Rear Camera Modules, Desktop Windows System, Multi-Platform Scaler, Matrix Engine, and Driver/CPU Integration.",
+  "description": "Dual-Agent Release Operations System with 12 Gates, Dual Front/Rear Camera Modules, Desktop Windows System, Multi-Platform Scaler, Windows Dynamics Debugger, God Mode Files, Raspberry Pi 5 Lab, Matrix Engine, and Driver/CPU Integration.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

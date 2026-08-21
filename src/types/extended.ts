@@ -142,4 +142,113 @@ export interface DesktopWindow {
   minHeight?: number;
   pinned: boolean;
   opacity: number;
+  vx?: number;
+  vy?: number;
+  lastDragTime?: number;
+  renderCount?: number;
+}
+
+// ==========================================
+// 5. WINDOW DYNAMICS DEBUGGER TYPES
+// ==========================================
+export interface WindowPhysicsState {
+  fps: number;
+  frameTimeMs: number;
+  totalRedraws: number;
+  activeWindowCount: number;
+  draggedWindowId: string | null;
+  velocityVectors: Record<string, { vx: number; vy: number; speed: number }>;
+  collisionIntersections: Array<{ idA: string; idB: string; overlapAreaPx: number }>;
+  snapActive: boolean;
+  snapTargetZone: 'NONE' | 'LEFT_HALF' | 'RIGHT_HALF' | 'TOP_HALF' | 'BOTTOM_HALF' | 'QUAD_1' | 'QUAD_2' | 'QUAD_3' | 'QUAD_4' | 'MAXIMIZE';
+  magneticDistancePx: number;
+  springDamping: number;
+  boundaryCollisions: number;
+  dragEventLog: Array<{ timestamp: string; windowId: string; type: 'DRAG_START' | 'DRAGGING' | 'DRAG_END' | 'SNAP' | 'RESIZE' | 'CASCADE'; x: number; y: number }>;
+}
+
+// ==========================================
+// 6. GOD MODE VFS & MASTER OVERRIDE TYPES
+// ==========================================
+export interface GodModeFileNode {
+  id: string;
+  path: string;
+  name: string;
+  type: 'FILE' | 'DIRECTORY' | 'DEVICE_NODE' | 'SYS_CONTROL' | 'MEMORY_MAP';
+  sizeBytes: number;
+  permissions: string; // "rwxr-xr-x"
+  owner: string; // "root" / "godmode"
+  uid: number; // 0
+  lastModified: string;
+  content: string;
+  isProtected: boolean;
+  merkleProofHash: string;
+}
+
+export interface GodModeOverrideState {
+  godModeActive: boolean;
+  masterAuthToken: string;
+  emergencyLockdownBypassed: boolean;
+  allGatesForcedPass: boolean;
+  memoryInjectionAddress: string;
+  memoryBufferHex: string;
+  quantumDecoherenceSuppressed: boolean;
+  thermalThrottlingBypassed: boolean;
+  rawJsonExportReady: boolean;
+}
+
+// ==========================================
+// 7. RASPBERRY PI INTEGRATION TYPES
+// ==========================================
+export type RPiModel = 'RPI_5_8GB' | 'RPI_4_B' | 'RPI_CM4_DUAL_CSI' | 'RPI_ZERO_2_W';
+
+export interface RPiGpioPin {
+  pinNumber: number; // 1 to 40
+  bcmNumber: number | null; // BCM GPIO 0-27 or null for power/ground
+  name: string;
+  type: '3V3_PWR' | '5V_PWR' | 'GND' | 'GPIO' | 'I2C_SDA' | 'I2C_SCL' | 'SPI_MOSI' | 'SPI_MISO' | 'SPI_SCLK' | 'SPI_CE0' | 'SPI_CE1' | 'UART_TX' | 'UART_RX' | 'PWM0' | 'PWM1';
+  direction: 'IN' | 'OUT' | 'ALT_FUNC';
+  state: 'HIGH' | 'LOW' | 'HIGH_Z' | 'PWM';
+  voltage: number; // 3.3, 5.0, 0
+  pwmDutyPercent?: number;
+  pull: 'UP' | 'DOWN' | 'NONE';
+  description: string;
+}
+
+export interface RPiI2cDevice {
+  addressHex: string; // e.g. "0x3C"
+  deviceType: string; // "SSD1306 OLED", "MPU6050 IMU", "BME280 Environment", "PCA9685 PWM"
+  bus: number; // 1
+  status: 'ONLINE' | 'STANDBY' | 'DMA_TRANSFER';
+  dataRegister: string;
+}
+
+export interface RPiCameraRibbonState {
+  cameraType: 'PI_CAM_V3_IMX708_AUTOFOCUS' | 'PI_HQ_IMX477_12MP' | 'PI_GLOBAL_SHUTTER_IMX296' | 'DUAL_CSI_STEREO';
+  csiPort: 'CSI_0' | 'CSI_1' | 'DUAL_SYNC';
+  resolution: string;
+  framerate: number;
+  autofocusMode: 'CONTINUOUS' | 'MANUAL' | 'HYPERFOCAL';
+  focusDistanceMeters: number;
+  rawBayerLaneWidth: number; // 2-lane or 4-lane MIPI CSI-2
+  dmaThroughputMbps: number;
+  active: boolean;
+}
+
+export interface RPiSystemTelemetry {
+  model: RPiModel;
+  soc: string; // BCM2712 / BCM2711
+  cpuTempC: number;
+  throttleState: 'NORMAL' | 'UNDERVOLTAGE_WARNING' | 'THROTTLED' | 'THERMAL_LIMIT';
+  armFreqMhz: number;
+  gpuFreqMhz: number;
+  ramUsageMb: number;
+  totalRamMb: number;
+  gpuMemorySplitMb: number;
+  fanSpeedRpm: number;
+  uartBaud: number;
+  gpioPins: RPiGpioPin[];
+  i2cDevices: RPiI2cDevice[];
+  cameraRibbon: RPiCameraRibbonState;
+  serialLogs: string[];
 }

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   AppWindow,
   Shield,
+  ShieldAlert,
   Sparkles,
   Cpu,
   Globe2,
@@ -64,6 +65,9 @@ import { SovereignEnginesView } from './SovereignEnginesView';
 import { SovereignLatticeView } from './SovereignLatticeView';
 import { J09RingView } from './J09RingView';
 import { AuditManifestView } from './AuditManifestView';
+import { WindowDynamicsDebugger } from './WindowDynamicsDebugger';
+import { GodModeFilesView } from './GodModeFilesView';
+import { RaspberryPiView } from './RaspberryPiView';
 
 interface DesktopWindowManagerProps {
   releaseState: any;
@@ -217,11 +221,35 @@ export const DesktopWindowManager: React.FC<DesktopWindowManagerProps> = ({
       badge: 'VFS'
     },
     {
+      id: 'DYNAMICS_DEBUG',
+      title: 'Dynamics Debug',
+      subTitle: 'Kinematics & Collisions',
+      iconName: 'Activity',
+      color: '#00e5ff',
+      badge: '60 FPS'
+    },
+    {
+      id: 'GOD_MODE',
+      title: 'God Mode Files',
+      subTitle: 'Root VFS & Overrides',
+      iconName: 'ShieldAlert',
+      color: '#ff4e00',
+      badge: 'RING 0'
+    },
+    {
+      id: 'RASPBERRY_PI',
+      title: 'Raspberry Pi',
+      subTitle: '40-Pin GPIO & CSI Link',
+      iconName: 'Cpu',
+      color: '#ec4899',
+      badge: 'RPi 5'
+    },
+    {
       id: 'SETTINGS',
       title: 'Cosmic Settings',
       subTitle: 'Scaling, Theme, Pointer',
       iconName: 'Settings',
-      color: '#ec4899',
+      color: '#a855f7',
       badge: 'OS'
     }
   ];
@@ -236,10 +264,10 @@ export const DesktopWindowManager: React.FC<DesktopWindowManagerProps> = ({
       isMinimized: false,
       isMaximized: false,
       zIndex: 10,
-      x: 240,
+      x: 180,
       y: 20,
-      width: 780,
-      height: 560,
+      width: 820,
+      height: 580,
       minWidth: 500,
       minHeight: 380,
       pinned: false,
@@ -433,8 +461,59 @@ export const DesktopWindowManager: React.FC<DesktopWindowManagerProps> = ({
       opacity: 1.0
     },
     {
+      id: 'DYNAMICS_DEBUG',
+      title: '14. Windows Dynamics & Kinematics Debugger',
+      iconName: 'Activity',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      x: 220,
+      y: 80,
+      width: 820,
+      height: 560,
+      minWidth: 500,
+      minHeight: 380,
+      pinned: false,
+      opacity: 1.0
+    },
+    {
+      id: 'GOD_MODE',
+      title: '15. Sovereign God Mode Files & Master VFS Overrides',
+      iconName: 'ShieldAlert',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      x: 250,
+      y: 90,
+      width: 840,
+      height: 580,
+      minWidth: 520,
+      minHeight: 390,
+      pinned: false,
+      opacity: 1.0
+    },
+    {
+      id: 'RASPBERRY_PI',
+      title: '16. Raspberry Pi 5 / CM4 Hardware & 40-Pin GPIO',
+      iconName: 'Cpu',
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 1,
+      x: 270,
+      y: 100,
+      width: 820,
+      height: 560,
+      minWidth: 500,
+      minHeight: 380,
+      pinned: false,
+      opacity: 1.0
+    },
+    {
       id: 'SETTINGS',
-      title: '13. Cosmic System Settings & Scaling',
+      title: '17. Cosmic System Settings & Scaling',
       iconName: 'Settings',
       isOpen: false,
       isMinimized: false,
@@ -800,6 +879,8 @@ export const DesktopWindowManager: React.FC<DesktopWindowManagerProps> = ({
         return Terminal;
       case 'Folder':
         return Folder;
+      case 'ShieldAlert':
+        return ShieldAlert;
       case 'Settings':
         return Settings;
       default:
@@ -843,6 +924,58 @@ export const DesktopWindowManager: React.FC<DesktopWindowManagerProps> = ({
             incidents={releaseState.incidents}
             onRollback={onResetSystem}
           />
+        );
+      case 'DYNAMICS_DEBUG':
+        return (
+          <div className="p-3">
+            <WindowDynamicsDebugger
+              windows={windows}
+              onUpdateWindow={(winId, updates) =>
+                setWindows(ws => ws.map(w => (w.id === winId ? { ...w, ...updates } : w)))
+              }
+              onTileWindows={tileAllWindows}
+              onCascadeWindows={() => {
+                setWindows(ws =>
+                  ws.map((w, idx) => ({
+                    ...w,
+                    x: 60 + (idx * 35) % 400,
+                    y: 40 + (idx * 35) % 250,
+                    isMaximized: false
+                  }))
+                );
+              }}
+              onResetPositions={() => {
+                setWindows(ws =>
+                  ws.map((w, idx) => ({
+                    ...w,
+                    x: 100 + idx * 40,
+                    y: 50 + idx * 30,
+                    isMaximized: false
+                  }))
+                );
+              }}
+            />
+          </div>
+        );
+      case 'GOD_MODE':
+        return (
+          <div className="p-3">
+            <GodModeFilesView
+              gates={releaseState.gates}
+              releaseState={releaseState}
+              onForcePassAllGates={() => {
+                releaseState.gates?.forEach((g: any) => onOverrideProvenance(g.id, 'MEASURED'));
+                onSealManifest();
+              }}
+              onResetGates={onResetSystem}
+            />
+          </div>
+        );
+      case 'RASPBERRY_PI':
+        return (
+          <div className="p-3">
+            <RaspberryPiView />
+          </div>
         );
       case 'TERMINAL':
         return (
