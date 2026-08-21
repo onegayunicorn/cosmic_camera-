@@ -1,0 +1,6 @@
+{
+  "name": "Cosmic Camera V3.0.0 — Dual-Agent Release & Photonic Orchestrator",
+  "description": "Dual-Agent Release Operations System with 12 Gates, Provenance Enforcement, PnP-ADMM Photon Reconstruction Lab with real-time telemetry dashboard & configurable acquisition parameters, 11 Sovereign Engines, and J09 Bio-Resonance telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
