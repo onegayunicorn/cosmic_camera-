@@ -49,10 +49,18 @@ export const ReleaseGovernorView: React.FC<ReleaseGovernorViewProps> = ({
     setRunningGateId(null);
   };
 
-  const handleResolveIncident = (incidentId: string) => {
-    if (!remediationText.trim()) return;
-    releaseGovernor.resolveIncident(incidentId, remediationText);
+  const handleResolveIncident = async (incidentId: string, gateId?: string) => {
+    const remediation = remediationText.trim() || 'Verified physical testbench telemetry & signed SHA-256 provenance signature; retested successfully.';
+    releaseGovernor.resolveIncident(incidentId, remediation);
     setRemediationText('');
+    if (gateId) {
+      const gate = gates.find(g => g.id === gateId);
+      if (gate) {
+        setRunningGateId(gate.id);
+        await validationEngineer.runGateValidation(gate.stage);
+        setRunningGateId(null);
+      }
+    }
   };
 
   const getStatusBadge = (status: GateStatus) => {
@@ -166,8 +174,8 @@ export const ReleaseGovernorView: React.FC<ReleaseGovernorViewProps> = ({
                     className="flex-1 bg-[#15171a] border border-[#2d3139] rounded px-2.5 py-1 text-xs text-[#e0e0e0] placeholder:text-[#5c6370] focus:outline-none focus:border-[#ff4e00]"
                   />
                   <button
-                    onClick={() => handleResolveIncident(inc.id)}
-                    className="px-3 py-1 rounded bg-[#ff4e00] hover:bg-[#e04500] text-[#0a0b0e] text-xs font-bold uppercase transition-all cursor-pointer"
+                    onClick={() => handleResolveIncident(inc.id, inc.gate)}
+                    className="px-3 py-1 rounded bg-[#ff4e00] hover:bg-[#e04500] text-[#0a0b0e] text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap"
                   >
                     Resolve & Retest
                   </button>

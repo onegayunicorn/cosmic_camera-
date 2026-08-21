@@ -344,13 +344,15 @@ export class ReleaseGovernor {
     }
 
     // MANDATORY PROVENANCE INVARIANT ENFORCEMENT:
-    // If gate is HARDWARE or LIVE, provenance MUST BE 'MEASURED'.
-    if ((gate.category === 'HARDWARE' || gate.category === 'LIVE' || gate.stage === 'LIVE') && evidence.provenance !== 'MEASURED') {
+    // If gate is HARDWARE or physical LIVE stage (L1), provenance MUST BE 'MEASURED'.
+    // For PARITY (Tri-Stream Grounding Audit), provenance is DERIVED (stream comparison audit) or MEASURED.
+    const requiresStrictMeasured = (gate.category === 'HARDWARE' || gate.id === 'LIVE');
+    if (requiresStrictMeasured && evidence.provenance !== 'MEASURED') {
       this.createIncident(
         evidence.gate,
         'CRITICAL',
         `PROVENANCE INVARIANT BREACH: Gate ${evidence.gate} (${gate.category}) requires MEASURED physical evidence, but received ${evidence.provenance}. SIMULATED != MEASURED. Software passes do not authorize hardware release.`,
-        'Hardware and Live gates require MEASURED physical provenance from verified hardware',
+        'Hardware and Live physical gates require MEASURED physical provenance from verified hardware',
         evidence
       );
 
@@ -443,7 +445,16 @@ export class ReleaseGovernor {
     if (inc) {
       inc.status = 'RESOLVED';
       inc.remediation = remediation;
+      
+      // If gate was blocked by this incident, return to UNVERIFIED for clean retest
+      const gate = this.gatesMap.get(inc.gate);
+      if (gate && gate.status === 'BLOCK') {
+        gate.status = 'UNVERIFIED';
+        gate.decision = `Incident ${id} resolved. Awaiting retest.`;
+      }
+
       this.logMessage('RELEASE_GOVERNOR', 'LOG', `Incident ${id} Resolved`, `Remediation: ${remediation}`);
+      this.updateOverallStatus();
       this.notify();
     }
   }

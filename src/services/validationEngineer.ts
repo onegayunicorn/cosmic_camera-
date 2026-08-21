@@ -179,9 +179,14 @@ export class ValidationEngineer {
         break;
     }
 
+    const timestamp = new Date().toISOString();
+    const evidenceId = `ev-${stage.toLowerCase()}-${Date.now()}`;
+    const testId = `tst-${Date.now()}`;
+    const measurementRef = `ref://${stage.toLowerCase()}/${Date.now()}`;
+
     const payload = {
       gate: stage,
-      timestamp: new Date().toISOString(),
+      timestamp,
       measurements,
       testConfig: {
         toolchain: 'Cosmic-Orchestrator-Harness-v3',
@@ -191,7 +196,7 @@ export class ValidationEngineer {
 
     // Calculate signed evidence hash
     let evidenceHash = simpleSha256(JSON.stringify({
-      id: `ev-${stage.toLowerCase()}-${Date.now()}`,
+      id: evidenceId,
       gate: stage,
       provenance,
       status,
@@ -204,16 +209,16 @@ export class ValidationEngineer {
     }
 
     const evidence: Evidence = {
-      id: `ev-${stage.toLowerCase()}-${Date.now()}`,
+      id: evidenceId,
       release: '3.0.0',
       gate: stage,
       status,
       provenance,
       deviceId: gate?.deviceId,
-      testId: `tst-${Date.now()}`,
-      measurementRef: `ref://${stage.toLowerCase()}/${Date.now()}`,
+      testId,
+      measurementRef,
       evidenceHash,
-      timestamp: new Date().toISOString(),
+      timestamp,
       signedBy: 'validation-engineer@cosmic-camera.org',
       payload
     };
