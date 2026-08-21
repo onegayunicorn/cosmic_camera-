@@ -12,6 +12,8 @@ interface HeaderProps {
   onToggleTerminal: () => void;
   isTerminalOpen: boolean;
   isRunning: boolean;
+  isDesktopWindowsMode: boolean;
+  onToggleDesktopWindowsMode: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,7 +24,9 @@ export const Header: React.FC<HeaderProps> = ({
   onReset,
   onToggleTerminal,
   isTerminalOpen,
-  isRunning
+  isRunning,
+  isDesktopWindowsMode,
+  onToggleDesktopWindowsMode
 }) => {
   const isAuthorized = releaseState.overallStatus === 'PASS';
   const isBlocked = releaseState.overallStatus === 'BLOCK';
@@ -111,6 +115,21 @@ export const Header: React.FC<HeaderProps> = ({
             )}
             <span>RELEASE: {releaseState.overallStatus}</span>
           </div>
+
+          {/* Desktop Display Mode Toggle Switch */}
+          <button
+            id="btn-toggle-desktop-display"
+            onClick={onToggleDesktopWindowsMode}
+            className={`px-3 py-1.5 rounded text-xs font-bold font-mono transition-all cursor-pointer flex items-center gap-1.5 border shadow-sm ${
+              isDesktopWindowsMode
+                ? 'bg-[#00e5ff] text-[#0a0b0e] border-[#00e5ff] shadow-[#00e5ff]/30'
+                : 'bg-[#1e232d] text-[#00e5ff] hover:bg-[#282f3c] border-[#00e5ff]/40 hover:border-[#00e5ff]'
+            }`}
+            title="Switch between Desktop OS Display (Homescreen & Double-Click Windows) and Tabbed Workspace"
+          >
+            <Cpu className="w-3.5 h-3.5" />
+            <span>{isDesktopWindowsMode ? '💻 DESKTOP DISPLAY ON' : '💻 SWITCH TO DESKTOP OS'}</span>
+          </button>
 
           {/* Quick Action: Run All 12 Gates */}
           <button

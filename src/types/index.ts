@@ -229,3 +229,5 @@ export interface J09BioReading {
   udpIngestStatus: 'DELIVERED' | 'DROPPED' | 'QUEUED';
   redisKey: string;
 }
+
+export * from './extended';
